@@ -1,0 +1,28 @@
+{
+    "settings": {
+        "picture_name": "test.gif",
+        "path": "./pictures/",
+        "transparent_color": "\u9ed1\u8272",
+        "top_status": 1,
+        "x": 1500,
+        "y": 800,
+        "color_support": {
+            "\u9ed1\u8272": "black",
+            "\u7eff\u8272": "green",
+            "\u767d\u8272": "white"
+        }
+    },
+    "default": {
+        "picture_name": "test.gif",
+        "path": "./pictures/",
+        "transparent_color": "\u9ed1\u8272",
+        "top_status": 1,
+        "x": 1500,
+        "y": 800,
+        "color_support": {
+            "\u9ed1\u8272": "black",
+            "\u7eff\u8272": "green",
+            "\u767d\u8272": "white"
+        }
+    }
+}
