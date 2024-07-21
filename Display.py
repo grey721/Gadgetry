@@ -22,6 +22,7 @@ class Pad:
         # =========================窗口设置=================================
         self.root = tk.Tk()  # 窗口主体
         self.get_picture()  # 获取gif序列,初始化size
+        self.root.attributes('-topmost', self.config["top_status"])  # 置顶信息
         self.root.overrideredirect(True)  # T则不显示UI,拖拽调整大小已关闭
         # ========================设置透明背景==============================
         self.label = tk.Label(self.root, bd=0)  # borderless window
@@ -49,7 +50,6 @@ class Pad:
     def init_size(self):
         with Image.open(self.path) as img:  # 获取图片的尺寸（宽度，高度），单位为像素
             width, height = img.size
-        self.root.attributes('-topmost', self.config["top_status"])  # 置顶信息
         assert width, height is not None
         size = f'{width}x{height}+{self.x}+{self.y}'
         self.root.geometry(size)  # 宽×高+x+y
@@ -92,6 +92,7 @@ class Pad:
             settings.title("设置")
             settings.geometry('200x150+650+200')
             settings.resizable(False, False)  # 禁止调整大小
+            settings.attributes('-topmost', 1)
             # ====================================设施置顶===========================
             var = tk.IntVar(value=self.config["top_status"])
 
@@ -195,6 +196,8 @@ class Pad:
         self.root.mainloop()
 
     def save_settings(self):
+        self.config['x'] = self.x
+        self.config['y'] = self.y
         content = json.load(open('config.json', 'r', encoding='utf-8'))
         content["settings"] = self.config
         with open('config.json', 'w') as f:
