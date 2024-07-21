@@ -12,23 +12,17 @@ class Pad:
         self.transCol = None
         self.drag_x = None
         self.drag_y = None
-        self.height = None
-        self.width = None
         self.picture = None
         self.delay = 200  # 毫秒
         self.config = json.load(open('config.json', 'r', encoding='utf-8'))["settings"]
         assert '.gif' in self.config['picture_name']
         self.path = self.config['path'] + self.config['picture_name']
-        self.get_size()
         self.x = self.config['x']  # 屏幕左上角为坐标原点
         self.y = self.config['y']
         # =========================窗口设置=================================
         self.root = tk.Tk()  # 窗口主体
-        assert self.width, self.height is not None
-        size = f'{self.width}x{self.height}+{self.x}+{self.y}'
-        self.root.geometry(size)  # 宽×高+x+y
+        self.init_size()
         self.root.overrideredirect(True)  # T则不显示UI,拖拽调整大小已关闭
-        self.root.attributes('-topmost', self.config["top_status"])  # 置顶信息
         # ========================设置透明背景==============================
         self.label = tk.Label(self.root, bd=0)  # borderless window
         self.init_transparent()
@@ -53,9 +47,13 @@ class Pad:
         if system() != 'Windows':
             self.label.config(bg='systemTransparent')
 
-    def get_size(self):
+    def init_size(self):
         with Image.open(self.path) as img:  # 获取图片的尺寸（宽度，高度），单位为像素
-            self.width, self.height = img.size
+            width, height = img.size
+        self.root.attributes('-topmost', self.config["top_status"])  # 置顶信息
+        assert width, height is not None
+        size = f'{width}x{height}+{self.x}+{self.y}'
+        self.root.geometry(size)  # 宽×高+x+y
 
     def get_picture(self):
         self.path = self.config['path'] + self.config['picture_name']
@@ -124,25 +122,26 @@ class Pad:
             chose.pack()
 
             # ==================================恢复默认设置==============================
+            def quit_settings():
+                self.save_settings()
+                settings.destroy()
+
             def recover():
                 if tk.messagebox.askquestion('确认操作', '确认执行此次操作吗？'):
                     self.config = json.load(open('config.json', 'r', encoding='utf-8'))["default"]
-                    self.root.geometry(f'+{self.x}+{self.y}')  # 宽×高+x+y
+                    self.x = self.config['x']
+                    self.y = self.config['y']
+                    self.init_size()
                     self.init_transparent()
                     var.set(1)
-                    get_top()
+                    self.get_picture()
                     quit_settings()
 
             # 使用按钮控件调用函数
             b = tk.Button(settings, text="恢复默认", command=recover)
             b.configure(font=('宋体', 15))
             b.pack()
-
             # ===========================关闭设置时===============================
-            def quit_settings():
-                self.save_settings()
-                settings.destroy()
-
             settings.protocol("WM_DELETE_WINDOW", quit_settings)
 
         # ================================= 创建右键菜单=======================
