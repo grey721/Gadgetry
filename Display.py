@@ -13,15 +13,15 @@ class Pad:
         self.drag_x = None
         self.drag_y = None
         self.picture = None
+        self.path = None
         self.delay = 200  # 毫秒
         self.config = json.load(open('config.json', 'r', encoding='utf-8'))["settings"]
         assert '.gif' in self.config['picture_name']
-        self.path = self.config['path'] + self.config['picture_name']
         self.x = self.config['x']  # 屏幕左上角为坐标原点
         self.y = self.config['y']
         # =========================窗口设置=================================
         self.root = tk.Tk()  # 窗口主体
-        self.init_size()
+        self.get_picture()  # 获取gif序列,初始化size
         self.root.overrideredirect(True)  # T则不显示UI,拖拽调整大小已关闭
         # ========================设置透明背景==============================
         self.label = tk.Label(self.root, bd=0)  # borderless window
@@ -30,7 +30,6 @@ class Pad:
         # =============================初始参数=======================================
         self.init_drag()  # 设置左键拖动
         self.set_popup()  # 设置右键面板
-        self.get_picture()  # 获取gif序列
 
     def init_transparent(self):
         self.transCol = self.config['transparent_color']
@@ -56,7 +55,17 @@ class Pad:
         self.root.geometry(size)  # 宽×高+x+y
 
     def get_picture(self):
-        self.path = self.config['path'] + self.config['picture_name']
+        if self.config['picture_name'] in os.listdir(self.config['path']):
+            self.path = self.config['path'] + self.config['picture_name']
+        else:
+            assert self.config['picture_name'] is not None
+            for name in os.listdir(self.config['path']):
+                if '.gif' in name:
+                    self.config['picture_name'] = name
+                    self.path = self.config['path'] + name
+                    break
+            else:
+                raise FileNotFoundError
         result = []
         i = 0
         while True:
@@ -66,6 +75,7 @@ class Pad:
             except tk.TclError:
                 break
         self.picture = result
+        self.init_size()
 
     def set_popup(self):
         def show_popup(event):
@@ -131,7 +141,6 @@ class Pad:
                     self.config = json.load(open('config.json', 'r', encoding='utf-8'))["default"]
                     self.x = self.config['x']
                     self.y = self.config['y']
-                    self.init_size()
                     self.init_transparent()
                     var.set(1)
                     self.get_picture()
