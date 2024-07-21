@@ -21,6 +21,8 @@ class Pad:
         self.y = self.config['y']
         # =========================窗口设置=================================
         self.root = tk.Tk()  # 窗口主体
+        self.screen_width = self.root.winfo_screenwidth()
+        self.screen_height = self.root.winfo_screenheight()
         self.get_picture()  # 获取gif序列,初始化size
         self.root.attributes('-topmost', self.config["top_status"])  # 置顶信息
         self.root.overrideredirect(True)  # T则不显示UI,拖拽调整大小已关闭
@@ -51,8 +53,14 @@ class Pad:
         with Image.open(self.path) as img:  # 获取图片的尺寸（宽度，高度），单位为像素
             width, height = img.size
         assert width, height is not None
-        size = f'{width}x{height}+{self.x}+{self.y}'
+        size = f'{width}x{height}'
+        if self.x + width > self.screen_width:
+            self.x = self.screen_width - width
+        if self.y + height > self.screen_height:
+            self.y = self.screen_height - height
         self.root.geometry(size)  # 宽×高+x+y
+        size = f'+{self.x}+{self.y}'
+        self.root.geometry(size)
 
     def get_picture(self):
         if self.config['picture_name'] in os.listdir(self.config['path']):
@@ -138,7 +146,7 @@ class Pad:
                 settings.destroy()
 
             def recover():
-                if tk.messagebox.askquestion('确认操作', '确认执行此次操作吗？'):
+                if tk.messagebox.askquestion('确认操作', '确认执行此次操作吗？') == 'yes':
                     self.config = json.load(open('config.json', 'r', encoding='utf-8'))["default"]
                     self.x = self.config['x']
                     self.y = self.config['y']
