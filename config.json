@@ -1,12 +1,12 @@
 {
     "settings": {
-        "picture_name": "idle.gif",
+        "picture_name": "\u8482\u8482.gif",
         "path": "./pictures/",
-        "delay": 200,
-        "transparent_color": "\u9ed1\u8272",
+        "transparent_color": "\u7eff\u8272",
         "top_status": 1,
-        "x": 1500,
-        "y": 800,
+        "mul_delay": 1,
+        "x": 1255,
+        "y": 527,
         "color_support": {
             "\u9ed1\u8272": "black",
             "\u7eff\u8272": "green",
@@ -16,9 +16,9 @@
     "default": {
         "picture_name": "17829.gif",
         "path": "./pictures/",
-        "delay": 200,
-        "transparent_color": "\u9ed1\u8272",
+        "transparent_color": "绿色",
         "top_status": 1,
+        "mul_delay": 2,
         "x": 1500,
         "y": 800,
         "color_support": {

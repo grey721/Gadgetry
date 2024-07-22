@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import Menu, messagebox
-
 import os
 import json
 from platform import system
@@ -14,8 +13,10 @@ class Pad:
         self.drag_y = None
         self.picture = None  # gif序列
         self.path = None
+        self.basic_delay = None
+        self.delay = None
         self.config = json.load(open('config.json', 'r', encoding='utf-8'))["settings"]
-        self.delay = self.config['delay']  # 毫秒
+        self.mul_delay = self.config['mul_delay']
         assert '.gif' in self.config['picture_name']
         self.x = self.config['x']  # 屏幕左上角为坐标原点
         self.y = self.config['y']
@@ -63,6 +64,7 @@ class Pad:
         self.root.geometry(size)
 
     def get_picture(self):
+        # =================处理图片路径=====================
         if self.config['picture_name'] in os.listdir(self.config['path']):
             self.path = self.config['path'] + self.config['picture_name']
         else:
@@ -74,6 +76,7 @@ class Pad:
                     break
             else:
                 raise FileNotFoundError
+        # ==============获得帧======================
         result = []
         i = 0
         while True:
@@ -83,6 +86,8 @@ class Pad:
             except tk.TclError:
                 break
         self.picture = result
+        self.basic_delay = int(800 / len(self.picture))
+        self.delay = self.basic_delay * self.mul_delay
         self.init_size()
 
     def set_popup(self):
@@ -116,6 +121,8 @@ class Pad:
 
             def change_pic(event):
                 self.config['picture_name'] = var_pic.get() + '.gif'
+                self.mul_delay = 2
+                var_speed.set(2)
                 self.get_picture()
 
             name_list = os.listdir(self.config['path'])
@@ -139,11 +146,12 @@ class Pad:
             chose.configure(font=('宋体', 15))
             chose.pack()
             # =================================设置速度=================================
-            var_speed = tk.IntVar(value=self.delay)
-            speed = [('快', 100), ('中', 200), ('慢', 300)]
+            var_speed = tk.IntVar(value=self.mul_delay)
+            speed = [('快', 1), ('中', 2), ('慢', 3)]
 
             def change_speed():
-                self.delay = var_speed.get()
+                self.mul_delay = var_speed.get()
+                self.delay = self.basic_delay * self.mul_delay
 
             for name, num in speed:
                 radio_button = tk.Radiobutton(settings, text=name, variable=var_speed, value=num, command=change_speed)
@@ -160,7 +168,7 @@ class Pad:
                     self.x = self.config['x']
                     self.y = self.config['y']
                     self.init_transparent()
-                    self.delay = self.config['delay']
+                    self.mul_delay = 2
                     self.get_picture()
                     quit_settings()
 
@@ -213,6 +221,7 @@ class Pad:
         self.root.mainloop()
 
     def save_settings(self):
+        self.config['mul_delay'] = self.mul_delay
         self.config['x'] = self.x
         self.config['y'] = self.y
         content = json.load(open('config.json', 'r', encoding='utf-8'))
