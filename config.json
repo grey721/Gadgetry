@@ -1,12 +1,12 @@
 {
     "settings": {
-        "picture_name": "\u60b2\u9e23.gif",
+        "picture_name": "idle.gif",
         "path": "./pictures/",
-        "delay": 100,
-        "transparent_color": "\u767d\u8272",
+        "delay": 200,
+        "transparent_color": "\u9ed1\u8272",
         "top_status": 1,
-        "x": 1197,
-        "y": 557,
+        "x": 1500,
+        "y": 800,
         "color_support": {
             "\u9ed1\u8272": "black",
             "\u7eff\u8272": "green",
@@ -14,7 +14,7 @@
         }
     },
     "default": {
-        "picture_name": "test.gif",
+        "picture_name": "17829.gif",
         "path": "./pictures/",
         "delay": 200,
         "transparent_color": "\u9ed1\u8272",

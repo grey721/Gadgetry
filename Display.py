@@ -160,7 +160,7 @@ class Pad:
                     self.x = self.config['x']
                     self.y = self.config['y']
                     self.init_transparent()
-                    var.set(1)
+                    self.delay = self.config['delay']
                     self.get_picture()
                     quit_settings()
 
@@ -213,7 +213,6 @@ class Pad:
         self.root.mainloop()
 
     def save_settings(self):
-        self.config['delay'] = self.delay
         self.config['x'] = self.x
         self.config['y'] = self.y
         content = json.load(open('config.json', 'r', encoding='utf-8'))
