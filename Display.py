@@ -12,10 +12,10 @@ class Pad:
         self.transCol = None
         self.drag_x = None
         self.drag_y = None
-        self.picture = None
+        self.picture = None  # gif序列
         self.path = None
-        self.delay = 200  # 毫秒
         self.config = json.load(open('config.json', 'r', encoding='utf-8'))["settings"]
+        self.delay = self.config['delay']  # 毫秒
         assert '.gif' in self.config['picture_name']
         self.x = self.config['x']  # 屏幕左上角为坐标原点
         self.y = self.config['y']
@@ -98,7 +98,7 @@ class Pad:
             # =========================创建一个新的Tkinter窗口作为设置面板==================
             settings = tk.Toplevel(self.root)
             settings.title("设置")
-            settings.geometry('200x150+650+200')
+            settings.geometry('200x230+650+200')
             settings.resizable(False, False)  # 禁止调整大小
             settings.attributes('-topmost', 1)
             # ====================================设施置顶===========================
@@ -130,7 +130,6 @@ class Pad:
 
             def change_col(event):
                 self.config['transparent_color'] = var_col.get()
-                self.transCol = self.config['transparent_color']
                 self.init_transparent()
 
             color_list = list(self.config['color_support'].keys())
@@ -139,9 +138,19 @@ class Pad:
                                   command=change_col)
             chose.configure(font=('宋体', 15))
             chose.pack()
+            # =================================设置速度=================================
+            var_speed = tk.IntVar(value=self.delay)
+            speed = [('快', 100), ('中', 200), ('慢', 300)]
+
+            def change_speed():
+                self.delay = var_speed.get()
+
+            for name, num in speed:
+                radio_button = tk.Radiobutton(settings, text=name, variable=var_speed, value=num, command=change_speed)
+                radio_button.pack()
 
             # ==================================恢复默认设置==============================
-            def quit_settings():
+            def quit_settings():  # 退出保存
                 self.save_settings()
                 settings.destroy()
 
@@ -204,6 +213,7 @@ class Pad:
         self.root.mainloop()
 
     def save_settings(self):
+        self.config['delay'] = self.delay
         self.config['x'] = self.x
         self.config['y'] = self.y
         content = json.load(open('config.json', 'r', encoding='utf-8'))
